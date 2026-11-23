@@ -26,8 +26,8 @@ describe('public privacy notice', () => {
     expect(wrapper.text()).toContain(
       'retention periods and request procedures are still being reviewed',
     )
-    expect(wrapper.text()).toContain('Max (Moshe)')
-    expect(wrapper.get('a[href^="mailto:"]').attributes('href')).toBe('mailto:zusuk@duris.sbs')
+    expect(wrapper.text()).toContain('duris@playduris.com')
+    expect(wrapper.get('a[href^="mailto:"]').attributes('href')).toBe('mailto:duris@playduris.com')
     expect(wrapper.findAll('h2').map((heading) => heading.text())).toEqual([
       'Contact about your data',
       'Accounts and community features',
