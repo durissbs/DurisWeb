@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useMudConnection } from '@/composables/useMudConnection'
 import { useMudStore } from '@/stores/mudStore'
 import { parseAnsiToHtml } from '@/utils/ansiParser'
@@ -16,7 +16,6 @@ import {
   LogOut,
   Play,
   Trash2,
-  Mail,
   Key,
   Battery,
   Info,
@@ -24,7 +23,6 @@ import {
 } from '@lucide/vue'
 import type { MudCharacterInfo } from '@/types/mud'
 import AccountInfoPanel from './account/AccountInfoPanel.vue'
-import ChangeEmailForm from './account/ChangeEmailForm.vue'
 import ChangePasswordForm from './account/ChangePasswordForm.vue'
 import DeleteCharacterDialog from './account/DeleteCharacterDialog.vue'
 import RestedBonusPanel from './account/RestedBonusPanel.vue'
@@ -39,13 +37,6 @@ const { enterWorld, disconnect, getAccountInfo, getRestedBonus } = useMudConnect
 const store = useMudStore()
 
 const activeTab = ref('characters')
-watch(
-  () => store.emailVerificationState,
-  (state) => {
-    if (state === 'requested') activeTab.value = 'email'
-  },
-  { immediate: true },
-)
 const characterToDelete = ref<MudCharacterInfo | null>(null)
 const showDeleteDialog = ref(false)
 
@@ -107,7 +98,7 @@ const handleDeleteConfirmed = () => {
       </Alert>
 
       <Tabs v-model="activeTab">
-        <TabsList class="grid w-full grid-cols-5">
+        <TabsList class="grid w-full grid-cols-4">
           <TabsTrigger value="characters" class="px-2 lg:px-4">
             <User class="h-4 w-4 lg:mr-2" />
             <span class="hidden lg:inline">Characters</span>
@@ -119,10 +110,6 @@ const handleDeleteConfirmed = () => {
           <TabsTrigger value="rested" class="px-2 lg:px-4">
             <Battery class="h-4 w-4 lg:mr-2" />
             <span class="hidden lg:inline">Rested</span>
-          </TabsTrigger>
-          <TabsTrigger value="email" class="px-2 lg:px-4">
-            <Mail class="h-4 w-4 lg:mr-2" />
-            <span class="hidden lg:inline">Email</span>
           </TabsTrigger>
           <TabsTrigger value="password" class="px-2 lg:px-4">
             <Key class="h-4 w-4 lg:mr-2" />
@@ -200,13 +187,6 @@ const handleDeleteConfirmed = () => {
         <TabsContent value="rested" class="mt-3 lg:mt-4">
           <ScrollArea class="h-[280px] lg:h-[350px]">
             <RestedBonusPanel />
-          </ScrollArea>
-        </TabsContent>
-
-        <!-- Change Email Tab -->
-        <TabsContent value="email" class="mt-3 lg:mt-4">
-          <ScrollArea class="h-[280px] lg:h-[350px]">
-            <ChangeEmailForm />
           </ScrollArea>
         </TabsContent>
 
