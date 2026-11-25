@@ -34,7 +34,6 @@ import { changelogRouter } from './features/changelog/routes.js';
 import { namedSetsRouter } from './features/namedSets/routes.js';
 import publicStatisticsRoutes from './routes/publicStatistics.js';
 import hookRoutes from './routes/hooks.js';
-import kofiRoutes from './routes/kofi.js';
 import { AppError, apiNotFound, errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { generateCsrfToken, verifyCsrfToken } from './middleware/csrf.js';
 import { fingerprintedFrontendAssets } from './middleware/frontendAssets.js';
@@ -152,8 +151,10 @@ export function createApp({
     }
   });
 
-  // ko-fi webhook (outside /api prefix, no csrf)
-  app.use('/kofihook', kofiRoutes);
+  // The retired donation endpoint must not persist donation data.
+  app.post('/kofihook', (_req, res) => {
+    res.status(410).send('Donations are no longer supported');
+  });
 
   // API routes
   app.use('/api/pvp', pvpRoutes);
