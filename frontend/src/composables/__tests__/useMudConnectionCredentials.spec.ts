@@ -19,8 +19,6 @@ const {
     setCloseDiagnostic: vi.fn(),
     retireMap: vi.fn(),
     clearChargenState: vi.fn(),
-    recoveryState: 'idle',
-    emailVerificationState: 'idle',
     accountInfo: { email: 'old@example.test' },
     setAccountInfo: vi.fn(),
     setAccountError: vi.fn(),
@@ -154,8 +152,6 @@ describe('useMudConnection credential lifecycle', () => {
       store.connectionState = _state
       store.connectionError = error ?? null
     })
-    store.recoveryState = 'idle'
-    store.emailVerificationState = 'idle'
     sockets.length = 0
     siteConfiguration.mudWsUrl.value = 'wss://mud.test'
     siteConfiguration.isLoaded.value = true
@@ -182,75 +178,15 @@ describe('useMudConnection credential lifecycle', () => {
     vi.useRealTimers()
   })
 
-  it('waits for the inbox acknowledgement before publishing an email change', async () => {
+  it('ignores obsolete recovery and email messages from an older server', async () => {
     const connection = createConnection()
     await connection.connect()
-    expect(connection.changeEmail('new@example.test')).toBe(true)
-    expect(store.emailVerificationState).toBe('requesting')
+    for (const action of ['email_verification_requested', 'reset_requested', 'reset_completed', 'email_changed']) {
+      sockets[0]!.onmessage?.({
+        data: JSON.stringify({ type: 'account', action, data: { email: 'fixture@example.test' } }),
+      })
+    }
     expect(store.setAccountInfo).not.toHaveBeenCalled()
-    sockets[0]!.onmessage?.({
-      data: JSON.stringify({ type: 'account', action: 'email_verification_requested' }),
-    })
-    expect(store.emailVerificationState).toBe('requested')
-    expect(store.setAccountInfo).not.toHaveBeenCalled()
-    connection.confirmEmail('inbox-code')
-    expect(JSON.parse(sockets[0]!.sent.at(-1)!)).toEqual({
-      type: 'cmd',
-      cmd: 'confirm_email',
-      data: { code: 'inbox-code' },
-    })
-    sockets[0]!.onmessage?.({
-      data: JSON.stringify({
-        type: 'account',
-        action: 'email_changed',
-        data: { email: 'new@example.test' },
-      }),
-    })
-    expect(store.emailVerificationState).toBe('verified')
-    expect(store.setAccountInfo).toHaveBeenCalledWith({ email: 'new@example.test' })
-  })
-
-  it('recovers through server acknowledgements without storing reset credentials', async () => {
-    const connection = createConnection()
-    await connection.requestReset('Returning')
-    expect(store.recoveryState).toBe('requesting')
-    sockets[0]!.onmessage?.({
-      data: JSON.stringify({ type: 'account', action: 'reset_requested' }),
-    })
-    expect(store.recoveryState).toBe('requested')
-    await connection.completeReset('Returning', 'inbox-code', 'new-password')
-    expect(store.recoveryState).toBe('completing')
-    expect(JSON.parse(sockets[0]!.sent.at(-1)!)).toEqual({
-      type: 'cmd',
-      cmd: 'complete_reset',
-      data: { account: 'Returning', code: 'inbox-code', newPassword: 'new-password' },
-    })
-    sockets[0]!.onmessage?.({
-      data: JSON.stringify({
-        type: 'account',
-        action: 'error',
-        error: 'Failed to save password change',
-      }),
-    })
-    expect(store.recoveryState).toBe('requested')
-    expect(store.setAccountError).toHaveBeenLastCalledWith('Failed to save password change')
-    sockets[0]!.onmessage?.({
-      data: JSON.stringify({ type: 'account', action: 'reset_completed' }),
-    })
-    expect(store.recoveryState).toBe('completed')
-    expect(clearMudCredentials).toHaveBeenCalled()
-    expect(storeMudCredentials).not.toHaveBeenCalled()
-  })
-
-  it('releases recovery controls after an interrupted connection without claiming success', async () => {
-    const connection = createConnection()
-    await connection.requestReset('Returning')
-    expect(store.recoveryState).toBe('requesting')
-    sockets[0]!.close()
-    expect(store.recoveryState).toBe('ready')
-    expect(store.setAccountError).toHaveBeenCalledWith(
-      expect.stringContaining('Connection interrupted'),
-    )
     expect(storeMudCredentials).not.toHaveBeenCalled()
   })
 
