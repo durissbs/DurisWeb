@@ -22,7 +22,6 @@ const sources = [
       'banner_url',
       'website',
       'location',
-      'email',
       'created_at',
       'last_seen_at',
     ],
