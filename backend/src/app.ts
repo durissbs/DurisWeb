@@ -136,7 +136,7 @@ export function createApp({
       res.json({
         siteTitle: settings.siteTitle,
         siteLogoUrl: settings.siteLogoUrl,
-        supportUrl: null,
+        supportUrl: '',
         mudHost: settings.mudHost,
         mudPort: settings.mudPort,
         mudPortTls: settings.mudPortTls,
