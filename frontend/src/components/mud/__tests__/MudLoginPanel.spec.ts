@@ -9,7 +9,6 @@ const { loginMock, registerMock, storeCredentialsMock, getCredentialsMock, mudSt
     getCredentialsMock: vi.fn(() => null),
     mudStore: {
       connectionState: 'connected',
-      recoveryState: 'idle',
       connectionError: null,
       isAuthenticated: false,
       autoLoginInProgress: false,
@@ -89,7 +88,6 @@ describe('MudLoginPanel credential lifecycle', () => {
     vi.clearAllMocks()
     getCredentialsMock.mockReturnValue(null)
     mudStore.connectionState = 'connected'
-    mudStore.recoveryState = 'idle'
     mudStore.connectionError = null
     mudStore.isAuthenticated = false
     mudStore.autoLoginInProgress = false
@@ -117,6 +115,7 @@ describe('MudLoginPanel credential lifecycle', () => {
 
     expect(registerMock).toHaveBeenCalledWith('NewAccount', 'new-password')
     expect(wrapper.find('#register-email').exists()).toBe(false)
+    expect(wrapper.text()).toContain('Contact game staff for assistance')
     expect(storeCredentialsMock).not.toHaveBeenCalled()
   })
 
@@ -141,10 +140,7 @@ describe('MudLoginPanel credential lifecycle', () => {
     await wrapper.find('#register-password').setValue('new-password')
     await wrapper.find('#register-confirm').setValue('new-password')
     await wrapper.findAll('form')[1]!.trigger('submit')
-    expect(registerMock).toHaveBeenCalledWith(
-      'Account_Name_A',
-      'new-password',
-    )
+    expect(registerMock).toHaveBeenCalledWith('Account_Name_A', 'new-password')
     wrapper.unmount()
   })
 })
