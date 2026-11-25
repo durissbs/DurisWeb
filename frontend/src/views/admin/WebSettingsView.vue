@@ -98,7 +98,6 @@ function getSettingLabel(key: string): string {
     mud_ws_url: 'MUD WebSocket URL',
     site_title: 'Website Title',
     site_logo_url: 'Website Logo URL',
-    support_url: 'Support URL',
     respect_webinfo_toggle: 'Respect Player Webinfo Toggle',
   }
   return labels[key] || key
@@ -116,7 +115,6 @@ function getSettingDescription(key: string): string {
     mud_ws_url: 'The complete wss: URL used by the browser-based MUD client.',
     site_title: 'The name of your website displayed in the navbar and browser tab.',
     site_logo_url: 'The logo image displayed before the site title in the navbar.',
-    support_url: 'Optional public HTTP or HTTPS support/donation page.',
     respect_webinfo_toggle:
       'When enabled, a saved "toggle webinfo off" hides extended character details and previously permitted PvP logs, equipment, and quotes. "toggle webinfo on" enables sharing. PvP snapshots recorded as private or with unknown permission stay hidden even when this setting is disabled. This does not restrict which public battles a player can view. Refresh open pages after changes.',
   }
@@ -665,29 +663,6 @@ onMounted(async () => {
             </div>
             <p class="text-xs text-muted-foreground">
               {{ getSettingDescription('site_title') }}
-            </p>
-          </div>
-
-          <div class="space-y-2">
-            <Label for="support_url">{{ getSettingLabel('support_url') }}</Label>
-            <div class="flex gap-2">
-              <Input
-                id="support_url"
-                v-model="editedSettings.support_url"
-                type="url"
-                :disabled="isSaving.support_url"
-                class="flex-1 max-w-[400px]"
-              />
-              <Button
-                @click="saveSetting('support_url')"
-                :disabled="isSaving.support_url || !hasChanges('support_url')"
-                size="sm"
-              >
-                {{ isSaving.support_url ? 'Saving...' : 'Save' }}
-              </Button>
-            </div>
-            <p class="text-xs text-muted-foreground">
-              {{ getSettingDescription('support_url') }}
             </p>
           </div>
 
