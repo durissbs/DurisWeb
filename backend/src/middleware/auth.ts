@@ -112,7 +112,9 @@ export function isRefreshToken(payload: JWTPayload | null): payload is JWTPayloa
  */
 export function verifyToken(token: string): JWTPayload | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as JWTPayload;
+    const payload = jwt.verify(token, JWT_SECRET);
+    if (typeof payload === 'string') return null;
+    return { ...(payload as JWTPayload), email: '' };
   } catch (_error) {
     return null;
   }
