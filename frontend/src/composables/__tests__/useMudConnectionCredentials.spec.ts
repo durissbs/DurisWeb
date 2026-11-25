@@ -409,7 +409,7 @@ describe('useMudConnection credential lifecycle', () => {
       const pending = (
         method === 'login'
           ? connection.login('Fixture', 'synthetic')
-          : connection.register('Fixture', 'synthetic', 'fixture@example.invalid')
+          : connection.register('Fixture', 'synthetic')
       ).then((value) => {
         result = value
       })
@@ -504,7 +504,7 @@ describe('useMudConnection credential lifecycle', () => {
       const pending =
         method === 'login'
           ? connection.login('Fixture', 'synthetic')
-          : connection.register('Fixture', 'synthetic', 'fixture@example.invalid')
+          : connection.register('Fixture', 'synthetic')
       await vi.advanceTimersByTimeAsync(10_050)
       await expect(pending).resolves.toBe(false)
       expect(store.connectionState).toBe('error')
