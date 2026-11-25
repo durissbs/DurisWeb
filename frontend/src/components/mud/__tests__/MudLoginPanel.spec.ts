@@ -113,10 +113,10 @@ describe('MudLoginPanel credential lifecycle', () => {
     await wrapper.find('#register-account').setValue('NewAccount')
     await wrapper.find('#register-password').setValue('new-password')
     await wrapper.find('#register-confirm').setValue('new-password')
-    await wrapper.find('#register-email').setValue('new@example.invalid')
     await wrapper.findAll('form')[1]!.trigger('submit')
 
-    expect(registerMock).toHaveBeenCalledWith('NewAccount', 'new-password', 'new@example.invalid')
+    expect(registerMock).toHaveBeenCalledWith('NewAccount', 'new-password')
+    expect(wrapper.find('#register-email').exists()).toBe(false)
     expect(storeCredentialsMock).not.toHaveBeenCalled()
   })
 
@@ -129,7 +129,6 @@ describe('MudLoginPanel credential lifecycle', () => {
     await wrapper.find('#register-account').setValue(account)
     await wrapper.find('#register-password').setValue('new-password')
     await wrapper.find('#register-confirm').setValue('new-password')
-    await wrapper.find('#register-email').setValue('new@example.invalid')
     await wrapper.findAll('form')[1]!.trigger('submit')
     expect(wrapper.text()).toContain(message)
     expect(registerMock).not.toHaveBeenCalled()
@@ -141,12 +140,10 @@ describe('MudLoginPanel credential lifecycle', () => {
     await wrapper.find('#register-account').setValue('Account_Name_A')
     await wrapper.find('#register-password').setValue('new-password')
     await wrapper.find('#register-confirm').setValue('new-password')
-    await wrapper.find('#register-email').setValue('new@example.invalid')
     await wrapper.findAll('form')[1]!.trigger('submit')
     expect(registerMock).toHaveBeenCalledWith(
       'Account_Name_A',
       'new-password',
-      'new@example.invalid',
     )
     wrapper.unmount()
   })
