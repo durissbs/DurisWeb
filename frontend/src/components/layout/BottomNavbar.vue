@@ -2,7 +2,6 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
-import { useSiteConfig } from '@/composables/useSiteConfig'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import {
   Home,
@@ -23,7 +22,6 @@ import {
   Activity,
   Clock,
   Radio,
-  Heart,
   Newspaper,
   Globe,
   Monitor,
@@ -34,7 +32,6 @@ import { projectSiteUrl } from '@/config/links'
 const route = useRoute()
 const router = useRouter()
 const { isAuthenticated, accountName } = useAuth()
-const { supportUrl } = useSiteConfig()
 const isMoreOpen = ref(false)
 
 // main nav items (shown in bottom bar)
@@ -62,17 +59,6 @@ const moreNavItems = computed(() => [
   { name: 'Privacy & choices', path: '/privacy', icon: FileText },
   { name: 'Project Site', path: projectSiteUrl, icon: Globe, external: true },
   { name: 'Status', path: '/status', icon: Radio },
-  ...(supportUrl.value
-    ? [
-        {
-          name: 'Donate',
-          path: supportUrl.value,
-          icon: Heart,
-          external: true,
-          highlight: true,
-        },
-      ]
-    : []),
   ...(isAuthenticated.value
     ? [
         { name: 'Profile', path: `/user/${accountName.value}`, icon: User },
