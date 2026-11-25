@@ -87,7 +87,6 @@ export async function getUserList(filters: UserManagementFilters): Promise<UserM
     character_name: 'ac.char_name',
     race: 'r.name',
     class: 'c.name',
-    email: 'a.email',
     last_login: 'ii.last_connect',
   };
 
@@ -121,7 +120,7 @@ export async function getUserList(filters: UserManagementFilters): Promise<UserM
       COALESCE(c.name, '') as class,
       pd.level,
       pd.racewar,
-      a.email,
+      '' as email,
       ii.last_ip,
       ii.last_connect as last_login,
       (
