@@ -124,7 +124,7 @@ const navigateTo = (item: string | { path: string; external?: boolean }) => {
               type="button"
               @click="navigateTo(item)"
               class="flex flex-col items-center gap-2 p-3 transition-colors hover:bg-ink-high"
-              :class="item.highlight ? 'text-ember' : isActive(item.path) ? 'text-vermilion bg-ink-high/60' : 'text-bone-muted'"
+              :class="isActive(item.path) ? 'text-vermilion bg-ink-high/60' : 'text-bone-muted'"
               :aria-current="isActive(item.path) ? 'page' : undefined"
             >
               <component :is="item.icon" class="w-6 h-6" aria-hidden="true" />
