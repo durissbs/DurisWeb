@@ -572,7 +572,16 @@ export function useMudConnection() {
   const handleAccountMessage = (message: MudAccountMessage) => {
     switch (message.action) {
       case 'info':
-        store.setAccountInfo(message.data)
+        // Old game builds may still send an email; retain only current account fields.
+        store.setAccountInfo({
+          name: message.data.name,
+          email: '',
+          created: message.data.created,
+          lastLogin: message.data.lastLogin,
+          totalPlaytime: message.data.totalPlaytime,
+          immortalLevel: message.data.immortalLevel,
+          characters: message.data.characters,
+        })
         break
       case 'password_changed':
         store.addLogEntry('system', 'Password changed successfully')
