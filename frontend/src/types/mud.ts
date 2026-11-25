@@ -37,7 +37,6 @@ export interface MudRegisterCommand extends MudCommandBase {
   data: {
     account: string
     password: string
-    email: string
   }
 }
 
