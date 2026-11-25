@@ -1109,7 +1109,7 @@ export function useMudConnection() {
     }
   }
 
-  const register = async (account: string, password: string, email: string) => {
+  const register = async (account: string, password: string) => {
     pendingAuthCredentials = { account, password }
     const ws = getWsRef()
     // connect first if not already connected
@@ -1124,7 +1124,7 @@ export function useMudConnection() {
     return sendCommand({
       type: 'cmd',
       cmd: 'register',
-      data: { account, password, email },
+      data: { account, password },
     })
   }
 
