@@ -181,7 +181,12 @@ describe('useMudConnection credential lifecycle', () => {
   it('ignores obsolete recovery and email messages from an older server', async () => {
     const connection = createConnection()
     await connection.connect()
-    for (const action of ['email_verification_requested', 'reset_requested', 'reset_completed', 'email_changed']) {
+    for (const action of [
+      'email_verification_requested',
+      'reset_requested',
+      'reset_completed',
+      'email_changed',
+    ]) {
       sockets[0]!.onmessage?.({
         data: JSON.stringify({ type: 'account', action, data: { email: 'fixture@example.test' } }),
       })
