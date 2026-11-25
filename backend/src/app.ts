@@ -34,6 +34,7 @@ import { changelogRouter } from './features/changelog/routes.js';
 import { namedSetsRouter } from './features/namedSets/routes.js';
 import publicStatisticsRoutes from './routes/publicStatistics.js';
 import hookRoutes from './routes/hooks.js';
+import kofiRoutes from './routes/kofi.js';
 import { AppError, apiNotFound, errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { generateCsrfToken, verifyCsrfToken } from './middleware/csrf.js';
 import { fingerprintedFrontendAssets } from './middleware/frontendAssets.js';
@@ -75,6 +76,8 @@ export function createApp({
 
   // Middleware
   app.use(compression()); // Enable gzip/deflate compression for all responses
+  // Reject retired webhook requests before parsing provider payloads.
+  app.use('/kofihook', kofiRoutes);
   configureRequestBodyParsers(app);
   app.use(cookieParser());
 
@@ -133,7 +136,7 @@ export function createApp({
       res.json({
         siteTitle: settings.siteTitle,
         siteLogoUrl: settings.siteLogoUrl,
-        supportUrl: settings.supportUrl,
+        supportUrl: null,
         mudHost: settings.mudHost,
         mudPort: settings.mudPort,
         mudPortTls: settings.mudPortTls,
@@ -149,11 +152,6 @@ export function createApp({
       logger.error('Get site config error:', error);
       res.status(500).json({ error: 'Failed to get site configuration' });
     }
-  });
-
-  // The retired donation endpoint must not persist donation data.
-  app.post('/kofihook', (_req, res) => {
-    res.status(410).send('Donations are no longer supported');
   });
 
   // API routes
