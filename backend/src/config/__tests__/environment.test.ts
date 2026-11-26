@@ -221,16 +221,26 @@ describe('backend environment configuration', () => {
     expect(configuration.geminiApiKey).toBe('gemini-key');
   });
 
-  it('does not enable retired donations even with legacy settings', () => {
-    const configuration = parseBackendEnvironment({
-      ...validEnvironment(),
-      DONATIONS_ENABLED: 'true',
-      KOFI_VERIFICATION_TOKEN: 'provider-token',
-      MUD_REDIS_DONATION_SECRET: 'donation-secret-at-least-32-bytes-long',
-    });
-    expect(configuration.features.donations).toBe(false);
-    expect(configuration.donationVerificationToken).toBeUndefined();
-    expect(configuration.donationSigningSecret).toBeUndefined();
+  it('requires explicit scoped Redis configuration for donations', () => {
+    const environment = validEnvironment();
+    environment.MUD_REDIS_ENABLED = 'true';
+    environment.DONATIONS_ENABLED = 'true';
+    environment.MUD_REDIS_AUTH_MODE = 'none';
+    environment.MUD_REDIS_HOST = 'mud-redis.test.invalid';
+    environment.MUD_REDIS_PORT = '6379';
+    environment.MUD_REDIS_DB = '1';
+    environment.MUD_REDIS_NAMESPACE = 'duris:local:main';
+    environment.MUD_REDIS_TLS = 'false';
+
+    expect(() => parseBackendEnvironment(environment)).toThrow(
+      /KOFI_VERIFICATION_TOKEN is required/,
+    );
+
+    environment.KOFI_VERIFICATION_TOKEN = 'provider-token';
+    environment.MUD_REDIS_DONATION_SECRET = 'donation-secret-at-least-32-bytes-long';
+    const configuration = parseBackendEnvironment(environment);
+    expect(configuration.features.donations).toBe(true);
+    expect(configuration.scopedRedis?.namespace).toBe('duris:local:main');
   });
 
   it('requires TLS for credentialed cache Redis outside loopback', () => {

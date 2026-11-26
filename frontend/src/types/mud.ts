@@ -37,6 +37,7 @@ export interface MudRegisterCommand extends MudCommandBase {
   data: {
     account: string
     password: string
+    email: string
   }
 }
 
@@ -139,6 +140,28 @@ export interface MudAccountInfoCommand extends MudCommandBase {
   cmd: 'account_info'
 }
 
+export interface MudChangeEmailCommand extends MudCommandBase {
+  cmd: 'change_email'
+  data: {
+    newEmail: string
+  }
+}
+
+export interface MudConfirmEmailCommand extends MudCommandBase {
+  cmd: 'confirm_email'
+  data: { code: string }
+}
+
+export interface MudRequestResetCommand extends MudCommandBase {
+  cmd: 'request_reset'
+  data: { account: string }
+}
+
+export interface MudCompleteResetCommand extends MudCommandBase {
+  cmd: 'complete_reset'
+  data: { account: string; code: string; newPassword: string }
+}
+
 export interface MudChangePasswordCommand extends MudCommandBase {
   cmd: 'change_password'
   data: {
@@ -178,6 +201,10 @@ export type MudClientCommand =
   | MudGetHometownsCommand
   | MudValidateNameCommand
   | MudAccountInfoCommand
+  | MudChangeEmailCommand
+  | MudConfirmEmailCommand
+  | MudRequestResetCommand
+  | MudCompleteResetCommand
   | MudChangePasswordCommand
   | MudDeleteCharacterCommand
   | MudRestedBonusCommand
@@ -263,6 +290,19 @@ export interface MudAccountInfoMessage {
   data: MudAccountInfo
 }
 
+export interface MudAccountEmailChangedMessage {
+  type: 'account'
+  action: 'email_changed'
+  data: {
+    email: string
+  }
+}
+
+export interface MudAccountCodeMessage {
+  type: 'account'
+  action: 'email_verification_requested' | 'reset_requested' | 'reset_completed'
+}
+
 export interface MudAccountPasswordChangedMessage {
   type: 'account'
   action: 'password_changed'
@@ -305,6 +345,8 @@ export interface MudAccountErrorMessage {
 
 export type MudAccountMessage =
   | MudAccountInfoMessage
+  | MudAccountEmailChangedMessage
+  | MudAccountCodeMessage
   | MudAccountPasswordChangedMessage
   | MudAccountCharacterDeletedMessage
   | MudAccountRestedBonusMessage

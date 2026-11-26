@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, AlertCircle } from '@lucide/vue'
+import RecoverPasswordForm from './account/RecoverPasswordForm.vue'
 
 const emit = defineEmits<{
   (e: 'authenticated'): void
@@ -25,11 +26,13 @@ const { siteTitle } = useSiteConfig()
 const loginAccount = ref('')
 const loginPassword = ref('')
 const loginError = ref('')
+const showRecovery = computed(() => store.recoveryState !== 'idle')
 
 // Register form
 const registerAccount = ref('')
 const registerPassword = ref('')
 const registerConfirmPassword = ref('')
+const registerEmail = ref('')
 const registerError = ref('')
 
 // Use store directly for reactive state
@@ -90,6 +93,16 @@ const validateRegister = () => {
     return false
   }
 
+  if (!registerEmail.value.trim()) {
+    registerError.value = 'Email is required'
+    return false
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerEmail.value)) {
+    registerError.value = 'Please enter a valid email address'
+    return false
+  }
+
   return true
 }
 
@@ -100,7 +113,7 @@ const handleLogin = () => {
 
 const handleRegister = () => {
   if (!validateRegister()) return
-  register(registerAccount.value, registerPassword.value)
+  register(registerAccount.value, registerPassword.value, registerEmail.value)
 }
 
 // Watch for successful authentication
@@ -116,6 +129,7 @@ watch(
 
 // Auto-login if we have stored credentials
 onMounted(async () => {
+  if (showRecovery.value) return
   const { getMudCredentials } = useAuth()
   const creds = getMudCredentials()
 
@@ -161,7 +175,8 @@ onMounted(async () => {
         </TabsList>
 
         <TabsContent value="login" class="space-y-4">
-          <form @submit.prevent="handleLogin" class="space-y-4">
+          <RecoverPasswordForm v-if="showRecovery" @close="store.recoveryState = 'idle'; store.setAccountError(null)" />
+          <form v-else @submit.prevent="handleLogin" class="space-y-4">
             <div class="space-y-2">
               <Label for="login-account">Account Name</Label>
               <Input
@@ -195,9 +210,9 @@ onMounted(async () => {
               <Loader2 v-if="isLoading" class="mr-2 h-4 w-4 animate-spin" />
               {{ isLoading ? 'Logging in...' : 'Login' }}
             </Button>
-            <p class="text-center text-sm text-muted-foreground">
-              Forgot your password? Contact game staff for assistance.
-            </p>
+            <Button type="button" variant="ghost" class="w-full" @click="store.recoveryState = 'ready'; store.setAccountError(null)">
+              Forgot password?
+            </Button>
           </form>
         </TabsContent>
 
@@ -212,6 +227,18 @@ onMounted(async () => {
                 placeholder="Choose an account name"
                 :disabled="isLoading"
                 autocomplete="username"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <Label for="register-email">Email</Label>
+              <Input
+                id="register-email"
+                v-model="registerEmail"
+                type="email"
+                placeholder="Enter your email"
+                :disabled="isLoading"
+                autocomplete="email"
               />
             </div>
 

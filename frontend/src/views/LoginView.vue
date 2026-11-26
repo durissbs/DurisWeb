@@ -95,9 +95,9 @@ async function handleLogin() {
             />
           </div>
 
-          <p class="text-sm text-muted-foreground">
-            Forgot your password? Contact game staff for assistance.
-          </p>
+          <RouterLink to="/play" class="text-sm text-primary underline">
+            Forgot password? Open the game client and choose “Forgot password”.
+          </RouterLink>
 
           <!-- Info Text -->
           <p class="text-sm text-muted-foreground">

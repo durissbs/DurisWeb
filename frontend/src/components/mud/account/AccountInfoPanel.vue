@@ -5,7 +5,7 @@ import { parseAnsiToHtml } from '@/utils/ansiParser'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
-import { User, Calendar, Clock, Crown } from '@lucide/vue'
+import { User, Calendar, Clock, Crown, Mail } from '@lucide/vue'
 import { format } from 'date-fns'
 
 const store = useMudStore()
@@ -63,6 +63,13 @@ const getImmortalLevel = (level: number): string => {
           <div>
             <p class="text-xs lg:text-sm text-muted-foreground">Account Name</p>
             <p class="text-sm lg:text-base font-medium">{{ accountInfo.name }}</p>
+          </div>
+          <div>
+            <p class="text-xs lg:text-sm text-muted-foreground flex items-center gap-1">
+              <Mail class="h-3 w-3" />
+              Email
+            </p>
+            <p class="text-sm lg:text-base font-medium truncate">{{ accountInfo.email || 'Not set' }}</p>
           </div>
         </div>
 

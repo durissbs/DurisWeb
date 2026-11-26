@@ -47,6 +47,7 @@ import {
   X,
   Activity,
   Clock,
+  Heart,
   Radio,
   Globe,
   Monitor,
@@ -93,6 +94,7 @@ const { disconnect: disconnectMud } = useMudConnection()
 const {
   siteTitle,
   siteLogoUrl,
+  supportUrl,
   mudHost,
   mudPort,
   mudPortTls,
@@ -522,6 +524,16 @@ const isPlayPage = computed(() => route.path === '/play')
             </DropdownMenuContent>
           </DropdownMenu>
           <RouterLink to="/forum" :class="navClass($route.path.startsWith('/forum'))">Forum</RouterLink>
+          <a
+            v-if="supportUrl"
+            :href="supportUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            :class="navClass(false)"
+          >
+            <Heart class="h-4 w-4" aria-hidden="true" />
+            Donate
+          </a>
           <RouterLink
             v-if="hasAnyAdminAccess"
             :to="adminDestination"
