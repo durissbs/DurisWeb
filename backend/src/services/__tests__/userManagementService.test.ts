@@ -68,6 +68,8 @@ describe('userManagementService', () => {
       const result = await getUserList({ page: 1, limit: 2 });
 
       expect(result.pagination).toEqual({ page: 1, limit: 2, total: 3, totalPages: 2 });
+      expect(result.data[0].email).toBeNull();
+      expect(String(query.mock.calls[1][0])).not.toMatch(/\ba\.email\b/);
       expect(result.data[0]).toMatchObject({
         pid: 42,
         race: '&+BHuman&n',

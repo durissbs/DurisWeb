@@ -34,6 +34,17 @@ describe('session-bound access tokens', () => {
   it('includes the web session ID in newly generated access tokens', () => {
     const token = generateAccessToken(accountName, 'fixture@example.invalid', sessionId);
     expect(verifyToken(token)?.sid).toBe(sessionId);
+    expect(jwt.decode(token)).not.toHaveProperty('email');
+  });
+
+  it('discards email claims from an existing session-bound token', () => {
+    const token = jwt.sign(
+      { accountName, email: 'fixture@example.invalid', sid: sessionId, tokenType: 'access' },
+      process.env.JWT_SECRET!,
+      { expiresIn: '30d' },
+    );
+    expect(verifyToken(token)?.sid).toBe(sessionId);
+    expect(verifyToken(token)?.email).toBe('');
   });
 
   it('rejects a legacy access token even when a refresh session is active', async () => {

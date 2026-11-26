@@ -55,8 +55,8 @@ deployment_literals=$(rg -ni "${deployment_literal_pattern}" \
   --glob '!frontend/src/**/__tests__/**' \
   | sed '/^frontend\/src\/content\/clientChangelog\.json:[0-9][0-9]*: *"content": /s@<code>https://duris\.sbs</code>@<code>reviewed-client-origin</code>@g' \
   | rg -i "${deployment_literal_pattern}" \
-  | rg -v -e '^docs/privacy-data-lifecycle\.md:[0-9]+:privacy policy\. Max \(Moshe\), contact `zusuk@duris\.sbs`, was supplied as the$' \
-    -e '^frontend/src/config/privacyNotice\.ts:[0-9]+:  email: [[:punct:]]zusuk@duris\.sbs[[:punct:]],$' || true)
+  | rg -v -e '^docs/privacy-data-lifecycle\.md:[0-9]+:privacy policy\. Duris, contact `duris@playduris\.com`, was supplied as the$' \
+    -e '^frontend/src/config/privacyNotice\.ts:[0-9]+:  email: [[:punct:]]duris@playduris\.com[[:punct:]],$' || true)
 report_matches 'Known deployment-specific paths, domains, or branding remain active:' \
   "${deployment_literals}"
 

@@ -515,7 +515,8 @@ export function parseBackendEnvironment(source: EnvironmentSource): BackendConfi
     mudDatabaseMode === 'separate' ? parseDatabase(source, 'MUD_DB', issues) : database;
   const guildSync = requiredBoolean(source, 'ENABLE_GUILD_SYNC', issues);
   const mudRedisEnabled = requiredBoolean(source, 'MUD_REDIS_ENABLED', issues);
-  const donationsEnabled = requiredBoolean(source, 'DONATIONS_ENABLED', issues);
+  // Donations are retired; old deployment settings must not re-enable collection.
+  const donationsEnabled = false;
   const r2Enabled = requiredBoolean(source, 'R2_ENABLED', issues);
   const pushEnabled = requiredBoolean(source, 'PUSH_ENABLED', issues);
   const geminiEnabled = requiredBoolean(source, 'GEMINI_ENABLED', issues);
@@ -526,10 +527,6 @@ export function parseBackendEnvironment(source: EnvironmentSource): BackendConfi
   }
   if (discordChannelId && !/^[1-9]\d{16,19}$/.test(discordChannelId)) {
     issues.push('DISCORD_CHANNEL_ID must be a Discord channel ID');
-  }
-
-  if (donationsEnabled && !mudRedisEnabled) {
-    issues.push('DONATIONS_ENABLED requires MUD_REDIS_ENABLED=true');
   }
 
   const scopedRedis = mudRedisEnabled
@@ -629,12 +626,6 @@ export function parseBackendEnvironment(source: EnvironmentSource): BackendConfi
       playerWipe: optionalBoolean(source, 'ALLOW_UNSAFE_PLAYER_WIPE', issues),
       databaseRestore: optionalBoolean(source, 'ALLOW_UNSAFE_DATABASE_RESTORE', issues),
     },
-    donationVerificationToken: donationsEnabled
-      ? requiredString(source, 'KOFI_VERIFICATION_TOKEN', issues)
-      : undefined,
-    donationSigningSecret: donationsEnabled
-      ? requiredString(source, 'MUD_REDIS_DONATION_SECRET', issues, 32)
-      : undefined,
     r2,
     push,
     geminiApiKey: geminiEnabled ? requiredString(source, 'GEMINI_API_KEY', issues) : undefined,

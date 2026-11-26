@@ -84,7 +84,6 @@ const REQUIRED_SETTING_KEYS = [
   'mud_ws_url',
   'site_title',
   'site_logo_url',
-  'support_url',
   'front_page_hero_enabled',
   'front_page_hero_title',
   'front_page_hero_subtitle',
@@ -218,7 +217,6 @@ export function parseWebSettingsRows(
   if (!heroTitle.trim()) issues.push('front_page_hero_title must not be empty');
   if (!heroSubtitle.trim()) issues.push('front_page_hero_subtitle must not be empty');
   validateOptionalHttpUrl(values.get('site_logo_url') ?? '', 'site_logo_url', issues);
-  validateOptionalHttpUrl(values.get('support_url') ?? '', 'support_url', issues);
   validateOptionalHttpUrl(
     values.get('front_page_hero_image_url') ?? '',
     'front_page_hero_image_url',
@@ -234,7 +232,7 @@ export function parseWebSettingsRows(
     mudWsUrl,
     siteTitle,
     siteLogoUrl: values.get('site_logo_url') ?? '',
-    supportUrl: values.get('support_url') ?? '',
+    supportUrl: '',
     frontPageHeroEnabled: parseBooleanSetting(values, 'front_page_hero_enabled', issues),
     frontPageHeroTitle: heroTitle,
     frontPageHeroSubtitle: heroSubtitle,
@@ -286,7 +284,7 @@ export async function getWebSettings(): Promise<WebSettings> {
  * Get a single web setting value
  */
 export async function getWebSetting(key: string): Promise<string | null> {
-  if (isInternalWebSettingKey(key)) return null;
+  if (isInternalWebSettingKey(key) || key === 'support_url') return null;
   const [rows] = await db.query<RowDataPacket[]>(
     'SELECT setting_value FROM web_settings WHERE setting_key = ? AND setting_key NOT LIKE ? AND setting_key NOT LIKE ? AND setting_key NOT LIKE ? AND setting_key NOT LIKE ? AND setting_key NOT LIKE ?',
     [
@@ -307,7 +305,7 @@ export async function getWebSetting(key: string): Promise<string | null> {
  */
 export async function getWebSettingsRaw(): Promise<WebSettingRow[]> {
   const [rows] = await db.query<RowDataPacket[]>(
-    "SELECT setting_key, setting_value, description, UNIX_TIMESTAMP(updated_at) AS updated_at_epoch, updated_by FROM web_settings WHERE setting_key != 'discord_webhook_url' AND setting_key NOT LIKE ? AND setting_key NOT LIKE ? AND setting_key NOT LIKE ? AND setting_key NOT LIKE ? AND setting_key NOT LIKE ? ORDER BY setting_key",
+    "SELECT setting_key, setting_value, description, UNIX_TIMESTAMP(updated_at) AS updated_at_epoch, updated_by FROM web_settings WHERE setting_key != 'discord_webhook_url' AND setting_key != 'support_url' AND setting_key NOT LIKE ? AND setting_key NOT LIKE ? AND setting_key NOT LIKE ? AND setting_key NOT LIKE ? AND setting_key NOT LIKE ? ORDER BY setting_key",
     [
       HOOK_JOURNAL_PREFIX + '%',
       PRIVACY_CHOICE_PREFIX + '%',
@@ -349,7 +347,6 @@ export async function updateWebSetting(
     'mud_ws_url',
     'site_title',
     'site_logo_url',
-    'support_url',
     'front_page_hero_enabled',
     'front_page_hero_title',
     'front_page_hero_subtitle',
@@ -381,19 +378,6 @@ export async function updateWebSetting(
   if (key === 'discord_webhook_enabled') {
     if (value !== 'true' && value !== 'false') {
       throw new AppError('Discord auto-post enabled must be "true" or "false"', 400);
-    }
-  }
-
-  if (key === 'support_url') {
-    try {
-      if (value) {
-        const parsed = new URL(value);
-        if (!['http:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password) {
-          throw new Error('invalid URL');
-        }
-      }
-    } catch {
-      throw new AppError('Support URL must be a valid HTTP or HTTPS URL', 400);
     }
   }
 

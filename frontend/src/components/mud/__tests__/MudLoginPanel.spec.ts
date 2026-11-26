@@ -9,7 +9,6 @@ const { loginMock, registerMock, storeCredentialsMock, getCredentialsMock, mudSt
     getCredentialsMock: vi.fn(() => null),
     mudStore: {
       connectionState: 'connected',
-      recoveryState: 'idle',
       connectionError: null,
       isAuthenticated: false,
       autoLoginInProgress: false,
@@ -89,7 +88,6 @@ describe('MudLoginPanel credential lifecycle', () => {
     vi.clearAllMocks()
     getCredentialsMock.mockReturnValue(null)
     mudStore.connectionState = 'connected'
-    mudStore.recoveryState = 'idle'
     mudStore.connectionError = null
     mudStore.isAuthenticated = false
     mudStore.autoLoginInProgress = false
@@ -113,10 +111,11 @@ describe('MudLoginPanel credential lifecycle', () => {
     await wrapper.find('#register-account').setValue('NewAccount')
     await wrapper.find('#register-password').setValue('new-password')
     await wrapper.find('#register-confirm').setValue('new-password')
-    await wrapper.find('#register-email').setValue('new@example.invalid')
     await wrapper.findAll('form')[1]!.trigger('submit')
 
-    expect(registerMock).toHaveBeenCalledWith('NewAccount', 'new-password', 'new@example.invalid')
+    expect(registerMock).toHaveBeenCalledWith('NewAccount', 'new-password')
+    expect(wrapper.find('#register-email').exists()).toBe(false)
+    expect(wrapper.text()).toContain('Contact game staff for assistance')
     expect(storeCredentialsMock).not.toHaveBeenCalled()
   })
 
@@ -129,7 +128,6 @@ describe('MudLoginPanel credential lifecycle', () => {
     await wrapper.find('#register-account').setValue(account)
     await wrapper.find('#register-password').setValue('new-password')
     await wrapper.find('#register-confirm').setValue('new-password')
-    await wrapper.find('#register-email').setValue('new@example.invalid')
     await wrapper.findAll('form')[1]!.trigger('submit')
     expect(wrapper.text()).toContain(message)
     expect(registerMock).not.toHaveBeenCalled()
@@ -141,13 +139,8 @@ describe('MudLoginPanel credential lifecycle', () => {
     await wrapper.find('#register-account').setValue('Account_Name_A')
     await wrapper.find('#register-password').setValue('new-password')
     await wrapper.find('#register-confirm').setValue('new-password')
-    await wrapper.find('#register-email').setValue('new@example.invalid')
     await wrapper.findAll('form')[1]!.trigger('submit')
-    expect(registerMock).toHaveBeenCalledWith(
-      'Account_Name_A',
-      'new-password',
-      'new@example.invalid',
-    )
+    expect(registerMock).toHaveBeenCalledWith('Account_Name_A', 'new-password')
     wrapper.unmount()
   })
 })

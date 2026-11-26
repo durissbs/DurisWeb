@@ -76,6 +76,8 @@ export function createApp({
 
   // Middleware
   app.use(compression()); // Enable gzip/deflate compression for all responses
+  // Reject retired webhook requests before parsing provider payloads.
+  app.use('/kofihook', kofiRoutes);
   configureRequestBodyParsers(app);
   app.use(cookieParser());
 
@@ -134,7 +136,7 @@ export function createApp({
       res.json({
         siteTitle: settings.siteTitle,
         siteLogoUrl: settings.siteLogoUrl,
-        supportUrl: settings.supportUrl,
+        supportUrl: '',
         mudHost: settings.mudHost,
         mudPort: settings.mudPort,
         mudPortTls: settings.mudPortTls,
@@ -151,9 +153,6 @@ export function createApp({
       res.status(500).json({ error: 'Failed to get site configuration' });
     }
   });
-
-  // ko-fi webhook (outside /api prefix, no csrf)
-  app.use('/kofihook', kofiRoutes);
 
   // API routes
   app.use('/api/pvp', pvpRoutes);

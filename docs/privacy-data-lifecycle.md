@@ -3,7 +3,7 @@
 This is the engineering inventory for notice/choice, retention, and subject
 requests ([implementation plan](ongoing-projects/plan.md), issues #10–#12).
 It describes prepared source, not a production-data inspection or approved
-privacy policy. Max (Moshe), contact `zusuk@duris.sbs`, was supplied as the
+privacy policy. Duris, contact `duris@playduris.com`, was supplied as the
 decision contact. Public controller wording, provider commitments, periods and
 destructive rules still require his approval. Do not interpret contact details
 as that approval.
@@ -136,7 +136,7 @@ Never purge pending/invalid audit or external-delivery evidence to meet a size c
 |---|---|---|
 | `web_sessions` | `account_name`; opaque `id`, digest credential | Current `expires_at_epoch`, `created_at`; revoke on verified erasure, never export credentials |
 | `account_login_history` | `account_name`, owner-confirmed `character_name`; IP, hostname, client/version | `timestamp`; restricted security history, period/holds pending |
-| `user_profiles` | `account_name`; email, bio, location, website, avatar/banner URLs | `created_at`, `last_seen_at`; remove profile and coordinate media copies |
+| `user_profiles` | `account_name`; bio, location, website, avatar/banner URLs; legacy email column is excluded from exports | `created_at`, `last_seen_at`; remove profile and coordinate media copies |
 | `user_profile_stats` | `account_name`; contribution/reputation projections | `first_post_at`, `last_post_at`; recompute/remove with content disposition |
 | `user_bans` | `account_name`, `banned_by`, `unbanned_by`; reason | `banned_at`, `unbanned_at`; review safety hold, actor and subject separately |
 | `suspicious_accounts` | `account_name`, `reviewed_by`; score, evidence, review notes | `flagged_at`, `reviewed_at`; restricted profiling, human review and objections required |
@@ -267,6 +267,8 @@ never issue a new receipt.
 access boundaries. Exports cannot make staff-only evidence public.
 
 ## Donations, external delivery and optional website analytics
+
+Donation collection and delivery have been retired. The tables listed below are legacy schema inventory, not active sources. The old webhook and CSV importer reject requests before reading donor data; historical records and backups require the separate authorized retention procedure.
 
 | Website table | Subject selection and personal fields | Time basis / disposition decision |
 |---|---|---|

@@ -133,14 +133,23 @@ describe('database-backed site configuration', () => {
     },
   );
 
-  it('rejects credentials in public support URLs', async () => {
+  it('ignores retired support URLs and does not require their settings row', () => {
     const rows = validRows();
     const supportUrl = rows.find((row) => row.setting_key === 'support_url');
     if (supportUrl) supportUrl.setting_value = 'https://user:secret@support.example.invalid';
 
-    expect(() => parseWebSettingsRows(rows)).toThrow(/support_url must not contain credentials/);
-    await expect(
-      updateWebSetting('support_url', 'https://user:secret@support.example.invalid', 'tester'),
-    ).rejects.toThrow(/Support URL/);
+    expect(parseWebSettingsRows(rows).supportUrl).toBe('');
+    expect(
+      parseWebSettingsRows(rows.filter((row) => row.setting_key !== 'support_url')).supportUrl,
+    ).toBe('');
   });
+
+  it.each(['https://support.example.invalid', 'https://user:secret@support.example.invalid'])(
+    'rejects writes to the retired support URL setting: %s',
+    async (value) => {
+      await expect(updateWebSetting('support_url', value, 'tester')).rejects.toThrow(
+        /Invalid setting key: support_url/,
+      );
+    },
+  );
 });
