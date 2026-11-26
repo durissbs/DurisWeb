@@ -61,6 +61,13 @@ export const useMudStore = defineStore('mud', () => {
   const showReconnectDialog = ref(false)
   const closeDiagnostic = ref<MudCloseDiagnostic | null>(null)
   const accountError = ref<string | null>(null)
+  const emailVerificationState = ref<
+    'idle' | 'requesting' | 'requested' | 'confirming' | 'verified'
+  >('idle')
+  const recoveryState = ref<
+    'idle' | 'ready' | 'requesting' | 'requested' | 'completing' | 'completed'
+  >('idle')
+
   // ==========================================================================
   // Active Character Data
   // ==========================================================================
@@ -839,6 +846,8 @@ export const useMudStore = defineStore('mud', () => {
     showReconnectDialog.value = false
     closeDiagnostic.value = null
     accountError.value = null
+    emailVerificationState.value = 'idle'
+    recoveryState.value = 'idle'
     clearChargenState()
   }
 
@@ -901,6 +910,8 @@ export const useMudStore = defineStore('mud', () => {
     showReconnectDialog,
     closeDiagnostic,
     accountError,
+    emailVerificationState,
+    recoveryState,
 
     // Computed
     isConnected,

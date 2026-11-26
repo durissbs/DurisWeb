@@ -32,7 +32,7 @@ useHead(() => ({
     <SectionRule />
     <section class="space-y-3" aria-labelledby="privacy-account-data">
       <h2 id="privacy-account-data" class="text-3xl">Accounts and community features</h2>
-      <p>Account and character details support sign-in, permissions and game features. Profiles, forum posts, reactions, votes, subscriptions and notifications support the community. Images are handled when you use those features. Account email registration and donation processing have been retired.</p>
+      <p>Account and character details support sign-in, permissions and game features. Profiles, forum posts, reactions, votes, subscriptions and notifications support the community. Images and donation details are handled when you use those features.</p>
       <p class="text-muted-foreground">Signing in uses session cookies. The browser game client may keep temporary sign-in information and client settings in your tab or browser. Signing out is separate from removing community content or account records.</p>
     </section>
     <section class="space-y-3" aria-labelledby="privacy-security">
@@ -49,7 +49,7 @@ useHead(() => ({
     <SectionRule />
     <section class="space-y-3" aria-labelledby="privacy-providers">
       <h2 id="privacy-providers" class="text-3xl">External services and copies</h2>
-      <p>Cloudflare delivers this website. Depending on enabled features, other services can handle images, notifications or security checks. These can include Cloudflare R2, Discord, browser push providers, a GeoIP provider, and Google's Gemini account-analysis integration.</p>
+      <p>Cloudflare delivers this website. Depending on enabled features, other services can handle donations, images, notifications or security checks. These can include Ko-fi, Cloudflare R2, Discord, browser push providers, a GeoIP provider, and Google's Gemini account-analysis integration.</p>
       <p class="text-muted-foreground">Available integrations vary. We are confirming active services, data locations and their handling before finalizing this notice. The proposed optional visit statistics make no GeoIP or other provider transfer.</p>
     </section>
     <section class="space-y-3" aria-labelledby="privacy-retention">

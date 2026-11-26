@@ -147,7 +147,7 @@ router.post(
         success: true,
         user: {
           accountName: userContext.accountName,
-          email: '',
+          email: userContext.email,
           avatarUrl: userContext.avatarUrl,
           characters: userContext.characters,
           permissions: userContext.permissions,
@@ -208,7 +208,7 @@ router.post('/refresh', async (req: Request, res: Response) => {
     }
 
     // Generate new access token for the same session
-    const newAccessToken = generateAccessToken(payload.accountName, '', payload.sid);
+    const newAccessToken = generateAccessToken(payload.accountName, payload.email, payload.sid);
 
     // Set new access token cookie
     res.cookie('access_token', newAccessToken, {
@@ -256,7 +256,7 @@ router.get('/me', optionalAuth, async (req: Request, res: Response) => {
     return res.json({
       user: {
         accountName: userContext.accountName,
-        email: '',
+        email: userContext.email,
         avatarUrl: userContext.avatarUrl,
         characters: userContext.characters,
         permissions: userContext.permissions,

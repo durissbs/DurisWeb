@@ -296,6 +296,7 @@ const groupedUsers = computed(() => {
     if (!groups.has(user.account_name)) {
       groups.set(user.account_name, {
         account_name: user.account_name,
+        email: user.email,
         last_ip: user.last_ip,
         last_login: user.last_login,
         web_last_login: user.web_last_login,
@@ -451,6 +452,12 @@ const groupedUsers = computed(() => {
                     <ArrowUpDown class="h-4 w-4" />
                   </div>
                 </TableHead>
+                <TableHead @click="toggleSort('email')" class="cursor-pointer hover:bg-muted/50">
+                  <div class="flex items-center gap-2">
+                    Email
+                    <ArrowUpDown class="h-4 w-4" />
+                  </div>
+                </TableHead>
                 <TableHead>Last IP</TableHead>
                 <TableHead @click="toggleSort('last_login')" class="cursor-pointer hover:bg-muted/50">
                   <div class="flex items-center gap-2">
@@ -519,6 +526,9 @@ const groupedUsers = computed(() => {
                   <TableCell>
                     <span v-if="account.characters[0].class" v-html="parseAnsiToHtml(account.characters[0].class)" />
                     <span v-else class="text-muted-foreground">—</span>
+                  </TableCell>
+                  <TableCell :rowspan="account.characters.length" class="text-sm text-muted-foreground align-middle border-l border-r">
+                    {{ account.email || '—' }}
                   </TableCell>
                   <TableCell :rowspan="account.characters.length" class="text-sm font-mono text-muted-foreground align-middle border-r">
                     {{ account.last_ip || '—' }}

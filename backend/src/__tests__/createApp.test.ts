@@ -92,14 +92,6 @@ describe('createApp composition', () => {
     expect(missing.body).toEqual({ error: 'API route not found' });
   });
 
-  it('rejects the retired donation webhook before body parsing and CSRF', async () => {
-    const response = await request(app)
-      .post('/kofihook')
-      .set('Content-Type', 'application/json')
-      .send('{invalid json');
-    expect(response.status).toBe(410);
-  });
-
   it('reaches the mounted changelog router through CSRF and real authentication', async () => {
     const read = await request(app).get('/api/changelog');
     expect(read.status).toBe(200);

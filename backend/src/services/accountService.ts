@@ -43,6 +43,7 @@ const REDIS_KEY_ACCOUNT = 'mud:account:';
 // db row interfaces
 interface AccountRow extends RowDataPacket {
   account_name: string;
+  email: string;
   password: string;
   confirmation_code: string | null;
   confirmed: number;
@@ -102,7 +103,7 @@ export async function getAccount(accountName: string): Promise<MudAccountData | 
     if (!accountData) {
       // fetch account row
       const [accountRows] = await pool.query<AccountRow[]>(
-        'SELECT account_name, password, confirmation_code, confirmed, confirmation_sent, blocked, last_login, last_good_char, last_evil_char, flags1, flags2, flags3, flags4 FROM accounts WHERE LOWER(account_name) = ?',
+        'SELECT * FROM accounts WHERE LOWER(account_name) = ?',
         [lowerName],
       );
 
@@ -125,7 +126,7 @@ export async function getAccount(accountName: string): Promise<MudAccountData | 
       accountData = {
         serialNumber: 0, // not stored in db, use 0
         accountName: account.account_name,
-        email: '',
+        email: account.email || '',
         passwordHash: account.password || '',
         confirmationString: account.confirmation_code || '',
         uniqueIPs,
@@ -159,7 +160,7 @@ export async function getAccount(accountName: string): Promise<MudAccountData | 
     }));
 
     // Retired links and reused names must not survive through cached account metadata.
-    return { ...accountData, email: '', characters };
+    return { ...accountData, characters };
   } catch (error) {
     logger.error(`error fetching account '${accountName}':`, error);
     return null;

@@ -56,6 +56,7 @@ onOnline(() => {
 })
 
 const clientState = computed<ClientState>(() => {
+  if (store.recoveryState !== 'idle' && !store.isAuthenticated) return 'login'
   // During copyover, maintain the current view (don't switch to login)
   if (store.copyoverInProgress) {
     // if was in game or has character, keep showing game

@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
+import { useSiteConfig } from '@/composables/useSiteConfig'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import {
   Home,
@@ -22,6 +23,7 @@ import {
   Activity,
   Clock,
   Radio,
+  Heart,
   Newspaper,
   Globe,
   Monitor,
@@ -32,6 +34,7 @@ import { projectSiteUrl } from '@/config/links'
 const route = useRoute()
 const router = useRouter()
 const { isAuthenticated, accountName } = useAuth()
+const { supportUrl } = useSiteConfig()
 const isMoreOpen = ref(false)
 
 // main nav items (shown in bottom bar)
@@ -59,6 +62,17 @@ const moreNavItems = computed(() => [
   { name: 'Privacy & choices', path: '/privacy', icon: FileText },
   { name: 'Project Site', path: projectSiteUrl, icon: Globe, external: true },
   { name: 'Status', path: '/status', icon: Radio },
+  ...(supportUrl.value
+    ? [
+        {
+          name: 'Donate',
+          path: supportUrl.value,
+          icon: Heart,
+          external: true,
+          highlight: true,
+        },
+      ]
+    : []),
   ...(isAuthenticated.value
     ? [
         { name: 'Profile', path: `/user/${accountName.value}`, icon: User },
@@ -124,7 +138,7 @@ const navigateTo = (item: string | { path: string; external?: boolean }) => {
               type="button"
               @click="navigateTo(item)"
               class="flex flex-col items-center gap-2 p-3 transition-colors hover:bg-ink-high"
-              :class="isActive(item.path) ? 'text-vermilion bg-ink-high/60' : 'text-bone-muted'"
+              :class="item.highlight ? 'text-ember' : isActive(item.path) ? 'text-vermilion bg-ink-high/60' : 'text-bone-muted'"
               :aria-current="isActive(item.path) ? 'page' : undefined"
             >
               <component :is="item.icon" class="w-6 h-6" aria-hidden="true" />

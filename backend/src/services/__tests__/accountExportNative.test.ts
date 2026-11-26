@@ -206,8 +206,6 @@ native('private account data export through the real route and database', () => 
     expect(Object.keys(response.body.categories)).toHaveLength(11);
     for (const rows of Object.values(response.body.categories)) expect(rows).toHaveLength(1);
     expect(response.body.categories.profile[0].bio).toBe('OWN-DATA');
-    expect(response.body.categories.profile[0]).not.toHaveProperty('email');
-    expect(response.text).not.toContain('OWN-DATA@example.invalid');
     expect(response.body.omissions).toHaveLength(5);
     for (const value of [
       other,

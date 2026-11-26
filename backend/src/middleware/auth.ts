@@ -45,12 +45,8 @@ const JWT_REFRESH_EXPIRY = '30d'; // Refresh token expires in 30 days
 /**
  * Generate JWT access token
  */
-export function generateAccessToken(
-  accountName: string,
-  _email: string,
-  sessionId: string,
-): string {
-  return jwt.sign({ accountName, sid: sessionId, tokenType: 'access' }, JWT_SECRET, {
+export function generateAccessToken(accountName: string, email: string, sessionId: string): string {
+  return jwt.sign({ accountName, email, sid: sessionId, tokenType: 'access' }, JWT_SECRET, {
     expiresIn: JWT_ACCESS_EXPIRY,
   });
 }
@@ -60,20 +56,20 @@ export function generateAccessToken(
  */
 export function generateRefreshToken(
   accountName: string,
-  _email: string,
+  email: string,
   sessionId: string,
 ): string {
-  return jwt.sign({ accountName, sid: sessionId, tokenType: 'refresh' }, JWT_SECRET, {
+  return jwt.sign({ accountName, email, sid: sessionId, tokenType: 'refresh' }, JWT_SECRET, {
     expiresIn: JWT_REFRESH_EXPIRY,
   });
 }
 
 export function generateTerminalToken(
   accountName: string,
-  _email: string,
+  email: string,
   sessionId: string,
 ): string {
-  return jwt.sign({ accountName, sid: sessionId, tokenType: 'terminal' }, JWT_SECRET, {
+  return jwt.sign({ accountName, email, sid: sessionId, tokenType: 'terminal' }, JWT_SECRET, {
     expiresIn: '5m',
   });
 }
@@ -81,10 +77,10 @@ export function generateTerminalToken(
 /** Issue a short-lived capability for non-terminal WebSocket operations. */
 export function generateWebSocketToken(
   accountName: string,
-  _email: string,
+  email: string,
   sessionId: string,
 ): string {
-  return jwt.sign({ accountName, sid: sessionId, tokenType: 'websocket' }, JWT_SECRET, {
+  return jwt.sign({ accountName, email, sid: sessionId, tokenType: 'websocket' }, JWT_SECRET, {
     expiresIn: '5m',
   });
 }
@@ -116,9 +112,7 @@ export function isRefreshToken(payload: JWTPayload | null): payload is JWTPayloa
  */
 export function verifyToken(token: string): JWTPayload | null {
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    if (typeof payload === 'string') return null;
-    return { ...(payload as JWTPayload), email: '' };
+    return jwt.verify(token, JWT_SECRET) as JWTPayload;
   } catch (_error) {
     return null;
   }
@@ -168,7 +162,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
     // Attach user info with permissions
     req.user = {
       accountName: payload.accountName,
-      email: '',
+      email: payload.email,
       sessionId: payload.sid,
       permissions,
       adminPermissions,
@@ -369,7 +363,7 @@ export async function optionalAuth(
     // Attach user info with permissions
     req.user = {
       accountName: payload.accountName,
-      email: '',
+      email: payload.email,
       sessionId: payload.sid,
       permissions,
       adminPermissions,
