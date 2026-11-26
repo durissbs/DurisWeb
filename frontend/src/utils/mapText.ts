@@ -40,7 +40,11 @@ const background: Record<string, string> = {
   L: '32,32,32',
   l: '0,0,0',
 }
-export function parseMapText(text: string): MapTextRun[] {
+export function parseMapText(text: string, format: 'map' | 'log' = 'map'): MapTextRun[] {
+  // Stored PvP logs use the server's native grammar, not legacy map escapes.
+  // Uppercase background is a blink/underline attribute, not a brighter color.
+  const backgroundColor = (letter: string) =>
+    format === 'log' ? foreground[letter.toLowerCase()] : background[letter]
   const runs: MapTextRun[] = []
   let fg: string | undefined
   let bg: string | undefined
@@ -55,7 +59,7 @@ export function parseMapText(text: string): MapTextRun[] {
       i++
       continue
     }
-    if (char === '\n' || (char === '\\' && text[i + 1] === 'n')) {
+    if (char === '\n' || (format === 'map' && char === '\\' && text[i + 1] === 'n')) {
       fg = undefined
       bg = undefined
       append('\n')
@@ -71,19 +75,19 @@ export function parseMapText(text: string): MapTextRun[] {
         i += 3
         continue
       }
-      if (next === '-' && background[color]) {
-        bg = `rgb(${background[color]})`
+      if (next === '-' && backgroundColor(color)) {
+        bg = `rgb(${backgroundColor(color)})`
         fg = undefined
         i += 3
         continue
       }
-      if (next === '=' && background[color] && foreground[text[i + 3] ?? '']) {
-        bg = `rgb(${background[color]})`
+      if (next === '=' && backgroundColor(color) && foreground[text[i + 3] ?? '']) {
+        bg = `rgb(${backgroundColor(color)})`
         fg = `rgb(${foreground[text[i + 3] ?? '']})`
         i += 4
         continue
       }
-      if (next === 'n' || next === 'N' || next === ']') {
+      if (next === 'n' || next === 'N' || (format === 'map' && next === ']')) {
         fg = undefined
         bg = undefined
         i += 2

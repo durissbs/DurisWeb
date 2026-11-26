@@ -3,7 +3,7 @@ import { ref, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useBattleDetail } from '@/composables/usePvPEvents'
 import { format } from 'date-fns'
-import { parseAnsiForVue, stripAnsiCodes } from '@/utils/ansiParser'
+import { parseAnsiForVue, parsePvpLogForVue, stripAnsiCodes } from '@/utils/ansiParser'
 import { extractPlayerName } from '@/utils/pvpParticipant'
 import { pvpApi } from '@/features/pvp/api'
 import { adminApi } from '@/features/admin/api'
@@ -706,7 +706,7 @@ const navigateToQuote = async (comment: PvPBattleComment) => {
                         </span>
                         <span>{{ index + 1 }}</span>
                       </div>
-                      <div class="flex-1 whitespace-pre-wrap px-2 leading-4" v-html="parseAnsiForVue(line, true)"></div>
+                      <div class="flex-1 whitespace-pre px-2 leading-4" v-html="parsePvpLogForVue(line)"></div>
                     </div>
                   </div>
                   <p v-else class="text-muted-foreground p-3">{{ logMessage }}</p>
@@ -839,7 +839,7 @@ const navigateToQuote = async (comment: PvPBattleComment) => {
                     <MessageSquare class="h-3 w-3 hidden group-hover:inline-block" />
                   </div>
                   <!-- Line content -->
-                  <div class="flex-1 whitespace-pre-wrap px-2 leading-5" v-html="parseAnsiForVue(line, true)"></div>
+                  <div class="flex-1 whitespace-pre px-2 leading-5" v-html="parsePvpLogForVue(line)"></div>
                 </div>
               </div>
               <p v-else class="text-muted-foreground p-4">{{ logMessage }}</p>
@@ -880,7 +880,7 @@ const navigateToQuote = async (comment: PvPBattleComment) => {
       <div v-if="selectedParticipant" class="h-full">
         <!-- Combat Log Only -->
         <div class="bg-black font-mono text-xs lg:text-sm text-foreground overflow-x-auto h-full overflow-y-auto">
-          <pre v-if="selectedLog" class="whitespace-pre-wrap px-2 py-1" v-html="parseAnsiForVue(selectedLog, true)"></pre>
+          <pre v-if="selectedLog" class="whitespace-pre px-2 py-1" v-html="parsePvpLogForVue(selectedLog)"></pre>
           <p v-else class="text-muted-foreground p-4">{{ logMessage }}</p>
         </div>
       </div>

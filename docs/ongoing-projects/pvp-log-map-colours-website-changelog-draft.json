@@ -1,0 +1,7 @@
+{
+  "version": "2026.11.27-draft",
+  "title": "Clearer maps in PvP battle logs",
+  "content": "<h3>PvP battle logs</h3><ul><li><strong>Accurate map colours.</strong> Players and mobs no longer have unintended grey backgrounds. Mountains, water, lava and other terrain use the game map colour palette, and map rows retain their spacing. Long rows scroll horizontally in the desktop, mobile and maximized combat log views.</li></ul>",
+  "category": "public",
+  "isPublished": false
+}

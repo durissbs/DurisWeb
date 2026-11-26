@@ -153,6 +153,31 @@ describe('battle participants with incomplete historical snapshots', () => {
   })
 })
 
+describe('combat log map rendering', () => {
+  it('retains map colors and trailing cells in mobile, desktop and fullscreen logs', async () => {
+    data.value!.participants[0]!.log = '&=LYP&=bB  \n&=rR &+yM'
+    const view = render()
+    await flushPromises()
+
+    for (const selector of ['#log-line-1', '#mobile-log-line-1']) {
+      const line = view.get(selector)
+      const spans = line.findAll('span[style]')
+      expect(spans[0]!.text()).toBe('P')
+      expect(spans[0]!.element.getAttribute('style')).toContain('background-color: rgb(0,0,0)')
+      expect(spans[1]!.element.textContent).toBe('  ')
+      expect(spans[1]!.element.getAttribute('style')).toContain('background-color: rgb(0,0,128)')
+      expect(line.find('.whitespace-pre').exists()).toBe(true)
+    }
+
+    await view.get('button[title="Maximize combat log"]').trigger('click')
+    const fullscreen = view.get('pre.whitespace-pre')
+    expect(fullscreen.element.textContent).toBe('P  \n M')
+    expect(fullscreen.findAll('span[style]')[2]!.element.getAttribute('style')).toContain(
+      'background-color: rgb(128,0,0)',
+    )
+  })
+})
+
 describe('participant character links', () => {
   it('links live characters to their public page and strikes retired ones', async () => {
     data.value!.participants[1] = participant(2, 'Other', {

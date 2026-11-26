@@ -11,6 +11,8 @@
  * Colors: l/L(black), r/R(red), g/G(green), y/Y(yellow), b/B(blue), m/M(magenta), c/C(cyan), w/W(white)
  */
 
+import { parseMapText } from './mapText.js'
+
 export interface AnsiColor {
   code: string
   class: string
@@ -476,6 +478,25 @@ export function parseAnsiForVue(text: string, collapseBlankLines = false): strin
 
   // Join lines with newlines
   return parsedLines.join('\n')
+}
+
+/**
+ * Render stored game logs with the map foreground palette and eight backgrounds.
+ * Ignore blink/underline in historical logs; the recipient preference is not stored.
+ * Only fixed palette values enter style attributes; all log text is escaped.
+ */
+export function parsePvpLogForVue(text: string): string {
+  return parseMapText(text, 'log')
+    .map((run) => {
+      const style = [
+        run.foreground ? `color: ${run.foreground}` : '',
+        run.background ? `background-color: ${run.background}` : '',
+      ]
+        .filter(Boolean)
+        .join('; ')
+      return style ? `<span style="${style}">${_escapeHtml(run.text)}</span>` : _escapeHtml(run.text)
+    })
+    .join('')
 }
 
 /** Convert MUD text to escaped, colored paragraphs for the editor. */
