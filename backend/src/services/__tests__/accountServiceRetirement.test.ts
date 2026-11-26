@@ -137,7 +137,7 @@ if (
       await admin.query('CREATE DATABASE ??', [database]);
       await admin.query('USE ??', [database]);
       await admin.query(
-        'CREATE TABLE accounts(account_name VARCHAR(50) PRIMARY KEY,email VARCHAR(255),password VARCHAR(255),confirmed TINYINT) ENGINE=InnoDB',
+        'CREATE TABLE accounts(account_name VARCHAR(50) PRIMARY KEY,email VARCHAR(255),password VARCHAR(255),confirmed TINYINT,confirmation_code VARCHAR(255),confirmation_sent TINYINT,blocked TINYINT,last_login DATETIME,last_good_char DATETIME,last_evil_char DATETIME,flags1 INT,flags2 INT,flags3 INT,flags4 INT) ENGINE=InnoDB',
       );
       await admin.query(
         'CREATE TABLE account_characters(id INT PRIMARY KEY AUTO_INCREMENT,account_name VARCHAR(50),char_name VARCHAR(50),pid INT,login_count INT DEFAULT 0,last_login DATETIME NULL,blocked TINYINT DEFAULT 0,racewar INT DEFAULT 0,deleted_at DATETIME NULL) ENGINE=InnoDB',
@@ -146,7 +146,7 @@ if (
         'CREATE TABLE account_ips(id INT PRIMARY KEY AUTO_INCREMENT,account_name VARCHAR(50),ip_address VARCHAR(45)) ENGINE=InnoDB',
       );
       await admin.query(
-        "INSERT INTO accounts VALUES('Former','synthetic@example.invalid','synthetic-hash',1),('Current','other@example.invalid','other-synthetic-hash',1)",
+        "INSERT INTO accounts(account_name,email,password,confirmed) VALUES('Former','synthetic@example.invalid','synthetic-hash',1),('Current','other@example.invalid','other-synthetic-hash',1)",
       );
       await admin.query(
         "INSERT INTO account_characters(account_name,char_name,pid) VALUES('Former','Reused',1),('Former','Overlord',2)",
@@ -162,7 +162,7 @@ if (
       );
       await admin.query("INSERT INTO associations VALUES(1,'Old guild')");
       await admin.query(
-        "INSERT INTO accounts VALUES('Retiredstaff','staff@example.invalid','synthetic-staff-hash',1)",
+        "INSERT INTO accounts(account_name,email,password,confirmed) VALUES('Retiredstaff','staff@example.invalid','synthetic-staff-hash',1)",
       );
       await admin.query(
         "INSERT INTO account_characters(account_name,char_name,pid) VALUES('Retiredstaff','Staff',5)",

@@ -21,15 +21,16 @@ Keep existing deployment safeguards that apply to this release.
 
 ## 1. Identify production and retain recovery
 
-Work in `/home/staging/durisweb` on `plesk.luminarimud.com` as `staging`.
+Work in `/home/durissbs/durisweb` on the Vultr production host as `durissbs`.
 Paths below are relative to that checkout. Read `AGENTS.md`, the build/cutover/
 recovery sections in `docs/deployment.md`, and `docs/local-production.md`. Confirm
 the environment and installed unit against the protected `.env`, `backend/.env`,
 `frontend/.env`, and `deploy/deployment.env`; never print credentials or whole
 environment files.
 
-Production serves `duris.sbs` and `www.duris.sbs` through the required
-`durisweb-cloudflared.service` tunnel to the website backend. Keep that ingress.
+Verify `playduris.com` and `www.playduris.com`. Keep the installed Cloudflare
+ingress units `durisweb-cloudflared.service` and `playduris-cloudflared.service`
+running and preserve service to the legacy hostnames.
 Inspect the loaded `durisweb-production.service`, its artifact paths and preflight
 drop-in, and the configured render-output directory. Record the currently deployed
 SHA, artifact hashes, service PID/restart counters, and a log timestamp.
@@ -64,7 +65,7 @@ Re-read deployment instructions if the pull changed them.
 ## 3. Prepare news and rebuild
 
 Run `$news-update` using
-[the repository skill](/home/staging/durisweb/.agents/skills/news-update/SKILL.md).
+[the repository skill](../news-update/SKILL.md).
 Reconcile existing entries/drafts with the pinned candidate and prepare its news
 now; publish only after step 5. Record a concrete no-news reason if already covered
 or if there are no reader-visible changes.

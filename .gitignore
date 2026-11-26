@@ -73,6 +73,7 @@ yarn.lock
 .debug/
 
 # Generated content
+/backend/.cache/git-commits.json
 backend/public/maps/
 backend/public/stats/history.json
 backend/public/stats/latest.json

@@ -22,9 +22,10 @@ Website for DurisMUD - usually hosted on same server as DurisMUD
 
 ## Production location
 
-- The only production website is this checkout on `plesk.luminarimud.com` (account `staging`, `/home/staging/durisweb`), serving `duris.sbs` and `www.duris.sbs`. There is no other host: the earlier `/home/duris` deployment and the tunnel `5b7d0472-7d5b-4c6e-8aa3-cd550e2bdb60` described in older journals are gone.
-- Public ingress is the Cloudflare tunnel `durisweb-production` (`afb18d75-613f-41af-bd53-bb0d19bbf5dc`), run on this host by `durisweb-cloudflared.service`. Both hostnames are proxied CNAMEs to that tunnel, and its ingress routes them to the backend on `127.0.0.1:7770`. Cloudflare is required, not optional; do not disable the tunnel group or plan an alternative ingress.
-- The paired MUD is `/home/staging/duris` with user units `duris-mariadb` (127.0.0.1:3307), `duris-redis` (127.0.0.1:6381), and `duris-mud-production`. Live settings are the gitignored `.env`, `backend/.env`, `frontend/.env`, and `deploy/deployment.env`; host-specific topology and recovery locations live in the gitignored `docs/local-production.md`. Public contributor guides remain portable. Sensitive release evidence stays outside the checkout.
+- Production is on the Vultr host under the `durissbs` account. The website checkout is `/home/durissbs/durisweb` and the paired MUD checkout is `/home/durissbs/duris`.
+- Verify website acceptance at `https://playduris.com` and `https://www.playduris.com`. The MUD health endpoint is `https://ws.playduris.com/health`. The legacy `duris.sbs` hostnames also respond and should be preserved.
+- Preserve the installed user units for the application, private cache and Cloudflare ingress. The website uses `durisweb-production.service`, `durisweb-redis.service`, `durisweb-cloudflared.service` and `playduris-cloudflared.service`. The MUD uses `duris-mud-production.service`, `duris-mariadb.service` and `duris-redis.service`.
+- Confirm effective bindings and release paths through the installed units and protected deployment settings. Keep host-specific recovery details in the private operator reference.
 
 ## Working Rules
 

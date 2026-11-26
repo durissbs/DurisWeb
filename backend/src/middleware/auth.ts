@@ -45,7 +45,11 @@ const JWT_REFRESH_EXPIRY = '30d'; // Refresh token expires in 30 days
 /**
  * Generate JWT access token
  */
-export function generateAccessToken(accountName: string, _email: string, sessionId: string): string {
+export function generateAccessToken(
+  accountName: string,
+  _email: string,
+  sessionId: string,
+): string {
   return jwt.sign({ accountName, sid: sessionId, tokenType: 'access' }, JWT_SECRET, {
     expiresIn: JWT_ACCESS_EXPIRY,
   });
