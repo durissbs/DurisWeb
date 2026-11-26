@@ -3,7 +3,7 @@
 This is the engineering inventory for notice/choice, retention, and subject
 requests ([implementation plan](ongoing-projects/plan.md), issues #10–#12).
 It describes prepared source, not a production-data inspection or approved
-privacy policy. Max (Moshe), contact `zusuk@duris.sbs`, was supplied as the
+privacy policy. Duris, contact `duris@playduris.com`, was supplied as the
 decision contact. Public controller wording, provider commitments, periods and
 destructive rules still require his approval. Do not interpret contact details
 as that approval.
