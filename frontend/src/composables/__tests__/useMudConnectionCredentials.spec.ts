@@ -195,6 +195,24 @@ describe('useMudConnection credential lifecycle', () => {
     expect(storeMudCredentials).not.toHaveBeenCalled()
   })
 
+  it('discards legacy email fields in account info while preserving current account details', async () => {
+    const connection = createConnection()
+    await connection.connect()
+    const account = {
+      name: 'Returning',
+      email: 'retired@example.invalid',
+      created: '2026-01-01',
+      lastLogin: '2026-11-01',
+      totalPlaytime: 42,
+      immortalLevel: 0,
+      characters: [],
+    }
+    sockets[0]!.onmessage?.({
+      data: JSON.stringify({ type: 'account', action: 'info', data: account }),
+    })
+    expect(store.setAccountInfo).toHaveBeenCalledWith({ ...account, email: '' })
+  })
+
   it('sends non-privileged client metadata on connection open', async () => {
     const connection = createConnection()
     await connection.connect()

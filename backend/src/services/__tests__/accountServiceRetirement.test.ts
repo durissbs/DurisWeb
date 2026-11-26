@@ -48,12 +48,17 @@ beforeEach(() => {
 
 describe('current account character reads', () => {
   it('replaces a legacy cached roster with current SQL links while keeping account metadata cached', async () => {
-    cache.set('mud:account:keeper', { accountName: 'Keeper', characters: [{ name: 'Retired' }] });
+    cache.set('mud:account:keeper', {
+      accountName: 'Keeper',
+      email: 'retired@example.invalid',
+      characters: [{ name: 'Retired' }],
+    });
     query.mockResolvedValue([
       [{ char_name: 'Fresh', login_count: 0, last_login: null, blocked: 0, racewar: 1 }],
     ]);
     const account = await getAccount('KEEPER');
     expect(account?.characters.map((character) => character.name)).toEqual(['Fresh']);
+    expect(account?.email).toBe('');
     expect(query).toHaveBeenCalledTimes(1);
     expect(query).toHaveBeenCalledWith(expect.stringContaining('deleted_at IS NULL'), ['keeper']);
     expect(setCache).not.toHaveBeenCalled();
