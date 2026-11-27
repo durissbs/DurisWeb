@@ -536,7 +536,9 @@ export function parsePvpLogForVue(text: string): string {
       ]
         .filter(Boolean)
         .join('; ')
-      return style ? `<span style="${style}">${_escapeHtml(run.text)}</span>` : _escapeHtml(run.text)
+      return style
+        ? `<span style="${style}">${_escapeHtml(run.text)}</span>`
+        : _escapeHtml(run.text)
     })
     .join('')
 }
