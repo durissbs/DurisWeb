@@ -24,27 +24,17 @@ const foreground: Record<string, string> = {
 }
 const background: Record<string, string> = {
   r: '80,0,0',
-  R: '128,0,0',
   g: '0,80,0',
-  G: '0,128,0',
   b: '0,0,60',
-  B: '0,0,100',
   c: '0,60,60',
-  C: '0,100,100',
   m: '60,0,60',
-  M: '100,0,100',
   y: '60,60,0',
-  Y: '100,100,0',
   w: '60,60,60',
-  W: '100,100,100',
-  L: '32,32,32',
   l: '0,0,0',
 }
-export function parseMapText(text: string, format: 'map' | 'log' = 'map'): MapTextRun[] {
-  // Stored PvP logs use the server's native grammar, not legacy map escapes.
-  // Uppercase background is a blink/underline attribute, not a brighter color.
-  const backgroundColor = (letter: string) =>
-    format === 'log' ? foreground[letter.toLowerCase()] : background[letter]
+export function parseMapText(text: string): MapTextRun[] {
+  // Uppercase backgrounds are attributes, not brightness.
+  const backgroundColor = (letter: string) => background[letter.toLowerCase()]
   const runs: MapTextRun[] = []
   let fg: string | undefined
   let bg: string | undefined
@@ -59,7 +49,7 @@ export function parseMapText(text: string, format: 'map' | 'log' = 'map'): MapTe
       i++
       continue
     }
-    if (char === '\n' || (format === 'map' && char === '\\' && text[i + 1] === 'n')) {
+    if (char === '\n' || (char === '\\' && text[i + 1] === 'n')) {
       fg = undefined
       bg = undefined
       append('\n')
@@ -87,7 +77,7 @@ export function parseMapText(text: string, format: 'map' | 'log' = 'map'): MapTe
         i += 4
         continue
       }
-      if (next === 'n' || next === 'N' || (format === 'map' && next === ']')) {
+      if (next === 'n' || next === 'N' || next === ']') {
         fg = undefined
         bg = undefined
         i += 2

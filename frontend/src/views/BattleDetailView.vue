@@ -5,6 +5,7 @@ import { useBattleDetail } from '@/composables/usePvPEvents'
 import { format } from 'date-fns'
 import { parseAnsiForVue, parsePvpLogForVue, stripAnsiCodes } from '@/utils/ansiParser'
 import { extractPlayerName } from '@/utils/pvpParticipant'
+import { stripNativePvpLog } from '@/utils/nativePvpLog'
 import { pvpApi } from '@/features/pvp/api'
 import { adminApi } from '@/features/admin/api'
 import { useToast } from '@/composables/useToast'
@@ -358,7 +359,7 @@ const logLines = computed(() => {
 
 // Handle clicking a line to quote it
 const handleLineClick = (lineNumber: number, lineContent: string) => {
-  const strippedContent = stripAnsiCodes(lineContent)
+  const strippedContent = stripNativePvpLog(lineContent)
   if (!selectedParticipant.value) return
 
   // Switch to comments tab on mobile
@@ -685,7 +686,7 @@ const navigateToQuote = async (comment: PvPBattleComment) => {
               </button>
 
               <div class="p-3">
-                <div class="rounded-md bg-black font-mono text-xs text-foreground overflow-x-auto max-h-[400px] overflow-y-auto">
+                <div class="min-w-0 max-w-full rounded-md bg-black font-mono text-xs text-foreground overflow-x-auto max-h-[400px] overflow-y-auto">
                   <div v-if="selectedLog" class="relative">
                     <div
                       v-for="(line, index) in logLines"
@@ -753,9 +754,9 @@ const navigateToQuote = async (comment: PvPBattleComment) => {
       </div>
 
       <!-- Desktop: POV Selector & Combat Log with Comments (70/30 layout) -->
-      <div class="hidden lg:grid grid-cols-1 lg:grid-cols-[7fr_3fr] gap-4">
+      <div class="hidden lg:grid grid-cols-1 lg:grid-cols-[minmax(0,7fr)_minmax(0,3fr)] gap-4">
         <!-- Left side: POV selector + Combat Log (70%) -->
-        <div class="rounded-lg border border-border bg-background">
+        <div class="min-w-0 rounded-lg border border-border bg-background">
           <div class="border-b border-border p-4">
             <div class="flex items-center gap-4">
               <label class="text-sm font-medium text-bone-muted whitespace-nowrap">Point of View:</label>
@@ -814,7 +815,7 @@ const navigateToQuote = async (comment: PvPBattleComment) => {
               </button>
             </div>
 
-            <div ref="logContainerRef" class="rounded-md bg-black font-mono text-sm text-foreground overflow-x-auto max-h-[800px] overflow-y-auto">
+            <div ref="logContainerRef" class="min-w-0 max-w-full rounded-md bg-black font-mono text-sm text-foreground overflow-x-auto max-h-[800px] overflow-y-auto">
               <div v-if="selectedLog" class="relative">
                 <div
                   v-for="(line, index) in logLines"

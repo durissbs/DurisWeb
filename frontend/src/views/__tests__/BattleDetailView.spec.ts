@@ -163,18 +163,17 @@ describe('combat log map rendering', () => {
       const line = view.get(selector)
       const spans = line.findAll('span[style]')
       expect(spans[0]!.text()).toBe('P')
-      expect(spans[0]!.element.getAttribute('style')).toContain('background-color: rgb(0,0,0)')
+      expect((spans[0]!.element as HTMLElement).style.backgroundColor).toBe('rgb(0, 0, 0)')
       expect(spans[1]!.element.textContent).toBe('  ')
-      expect(spans[1]!.element.getAttribute('style')).toContain('background-color: rgb(0,0,128)')
+      expect((spans[1]!.element as HTMLElement).style.backgroundColor).toBe('rgb(0, 0, 128)')
       expect(line.find('.whitespace-pre').exists()).toBe(true)
     }
 
     await view.get('button[title="Maximize combat log"]').trigger('click')
     const fullscreen = view.get('pre.whitespace-pre')
     expect(fullscreen.element.textContent).toBe('P  \n M')
-    expect(fullscreen.findAll('span[style]')[2]!.element.getAttribute('style')).toContain(
-      'background-color: rgb(128,0,0)',
-    )
+    const lava = fullscreen.findAll('span[style]')[2]!.element as HTMLElement
+    expect(lava.style.backgroundColor).toBe('rgb(128, 0, 0)')
   })
 })
 
