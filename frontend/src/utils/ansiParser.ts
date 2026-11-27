@@ -11,6 +11,8 @@
  * Colors: l/L(black), r/R(red), g/G(green), y/Y(yellow), b/B(blue), m/M(magenta), c/C(cyan), w/W(white)
  */
 
+import { parseNativePvpLog } from './nativePvpLog.js'
+
 export interface AnsiColor {
   code: string
   class: string
@@ -476,6 +478,69 @@ export function parseAnsiForVue(text: string, collapseBlankLines = false): strin
 
   // Join lines with newlines
   return parsedLines.join('\n')
+}
+
+// Explicit terrain backgrounds use native base colors. Foregrounds on black
+// use readable terminal colors; dim yellow stays olive for terrain.
+const logBaseColors: Record<string, string> = {
+  l: '0,0,0',
+  b: '0,0,128',
+  g: '0,128,0',
+  c: '0,128,128',
+  r: '128,0,0',
+  m: '128,0,128',
+  y: '128,128,0',
+  w: '192,192,192',
+}
+
+const logBrightColors: Record<string, string> = {
+  L: '160,160,160',
+  B: '96,165,250',
+  G: '74,222,128',
+  C: '103,232,249',
+  R: '248,113,113',
+  M: '192,132,252',
+  Y: '255,255,0',
+  W: '255,255,255',
+}
+
+const logReadableColors: Record<string, string> = {
+  l: '156,163,175',
+  b: '59,130,246',
+  g: '74,180,110',
+  c: '34,180,200',
+  r: '220,90,90',
+  m: '168,110,220',
+  y: '128,128,0',
+  w: '192,192,192',
+}
+
+/** Render native log runs; fixed palette values are the only style input. */
+export function parsePvpLogForVue(text: string): string {
+  return parseNativePvpLog(text)
+    .map((run) => {
+      const fg = run.foreground
+      const bg = run.background
+      const bold = fg !== undefined && fg === fg.toUpperCase()
+      const color = fg
+        ? bold
+          ? logBrightColors[fg]
+          : bg && bg !== 'l'
+            ? logBaseColors[fg]
+            : logReadableColors[fg]
+        : undefined
+      const style = [
+        color ? `color: rgb(${color})` : '',
+        bg ? `background-color: rgb(${logBaseColors[bg]})` : '',
+        bold ? 'font-weight: bold' : '',
+      ]
+        .filter(Boolean)
+        .join('; ')
+      return style
+        ? `<span style="${style}">${_escapeHtml(run.text)}</span>`
+        : _escapeHtml(run.text)
+    })
+    .join('')
 }
 
 /** Convert MUD text to escaped, colored paragraphs for the editor. */

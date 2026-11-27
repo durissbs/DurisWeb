@@ -513,6 +513,24 @@ databaseTests('PvP SQL contract on a disposable database', () => {
     expect((await service.getBattleComments(1))[0].quotedText).toBeNull();
   });
 
+  it('persists native quote text without dropping URL parameters or unknown codes', async () => {
+    const line = '&+Ghttps://example.invalid/?x=1&name=Bob&n &+u&=zz';
+    await connection.query('UPDATE pkill_info SET log = ? WHERE event_id = 1 AND pid = 2', [line]);
+    const created = await service.createBattleComment(
+      1,
+      'fixture',
+      'Native quote',
+      undefined,
+      undefined,
+      'FORGED_TEXT',
+      1,
+      2,
+    );
+    const expected = 'https://example.invalid/?x=1&name=Bob &+u&=zz';
+    expect(created.quotedText).toBe(expected);
+    expect((await service.getBattleComments(1))[0].quotedText).toBe(expected);
+  });
+
   it('serves names, levels, rich metadata, and statistics for both record formats', async () => {
     expect(await service.getLeaderboard('kills', 'all')).toEqual(
       expect.arrayContaining([

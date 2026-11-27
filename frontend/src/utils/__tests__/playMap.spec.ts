@@ -99,6 +99,12 @@ describe('play map boundaries and layout', () => {
       { text: 'uncolored', foreground: undefined, background: undefined },
     ])
   })
+  it('uses the same background for both cases in the live map', () => {
+    for (const letter of 'lrgybmcw') {
+      expect(parseMapText(`&=${letter.toUpperCase()}YP`)).toEqual(parseMapText(`&=${letter}YP`))
+    }
+    expect(parseMapText('&=LYP')[0]?.background).toBe('rgb(0,0,0)')
+  })
   it('reserves partial authored layouts before placing generated rooms without overlaps', () => {
     const input = parseMapGraph({
       nodes: [

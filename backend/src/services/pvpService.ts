@@ -17,7 +17,8 @@ import {
   PvPBattleStats,
   PvPFavorite,
 } from '../types/index.js';
-import { extractPlayerName, stripAnsiCodes } from '../utils/stringUtils.js';
+import { extractPlayerName } from '../utils/stringUtils.js';
+import { stripNativePvpLog } from '../utils/nativePvpLog.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { getWebSettings } from './webSettingsService.js';
 import {
@@ -1539,7 +1540,7 @@ export async function createBattleComment(
         : undefined;
     if (line === undefined) throw new AppError('Invalid quoted line', 400);
     // The client supplies a location, never authoritative log text.
-    quotedText = stripAnsiCodes(line).slice(0, 500);
+    quotedText = stripNativePvpLog(line).slice(0, 500);
   }
   const quoteSelect = await pvpQuoteSelectSql();
   return withRelaxedSqlMode(async (connection) => {

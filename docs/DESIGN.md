@@ -335,6 +335,19 @@ named `--mud-*` variables, and history contracts remain together in
 [Recipient colors in web chat](CHAT-COLORIZATION.md). Do not infer those IDs
 from ANSI SGR order or assume that all legacy ANSI animation shares that policy.
 
+### PvP combat log colors
+
+Stored PvP logs use the native Duris grammar and eight case-insensitive
+backgrounds. Foregrounds on black use a readable terminal palette; explicit
+nonblack terrain backgrounds retain the native base colors. Uppercase foregrounds
+are bold. Uppercase background letters do not brighten backgrounds in logs or
+browser maps; blink/underline stays steady. Foreground-only and background-only
+codes clear the opposite color. Newlines reset both colors. Literal URL
+parameters and unknown codes are retained and escaped. Quote preview and
+authoritative backend use matching native lexical rules with mirrored fixtures.
+Colored spaces and trailing cells are retained; bounded scroll containers keep
+map rows intact. Authored help, forum and builder colors remain unchanged.
+
 ### Wiki world map
 
 The initial map data load retries interrupted requests, timeouts, and temporary

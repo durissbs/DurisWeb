@@ -24,23 +24,17 @@ const foreground: Record<string, string> = {
 }
 const background: Record<string, string> = {
   r: '80,0,0',
-  R: '128,0,0',
   g: '0,80,0',
-  G: '0,128,0',
   b: '0,0,60',
-  B: '0,0,100',
   c: '0,60,60',
-  C: '0,100,100',
   m: '60,0,60',
-  M: '100,0,100',
   y: '60,60,0',
-  Y: '100,100,0',
   w: '60,60,60',
-  W: '100,100,100',
-  L: '32,32,32',
   l: '0,0,0',
 }
 export function parseMapText(text: string): MapTextRun[] {
+  // Uppercase backgrounds are attributes, not brightness.
+  const backgroundColor = (letter: string) => background[letter.toLowerCase()]
   const runs: MapTextRun[] = []
   let fg: string | undefined
   let bg: string | undefined
@@ -71,14 +65,14 @@ export function parseMapText(text: string): MapTextRun[] {
         i += 3
         continue
       }
-      if (next === '-' && background[color]) {
-        bg = `rgb(${background[color]})`
+      if (next === '-' && backgroundColor(color)) {
+        bg = `rgb(${backgroundColor(color)})`
         fg = undefined
         i += 3
         continue
       }
-      if (next === '=' && background[color] && foreground[text[i + 3] ?? '']) {
-        bg = `rgb(${background[color]})`
+      if (next === '=' && backgroundColor(color) && foreground[text[i + 3] ?? '']) {
+        bg = `rgb(${backgroundColor(color)})`
         fg = `rgb(${foreground[text[i + 3] ?? '']})`
         i += 4
         continue

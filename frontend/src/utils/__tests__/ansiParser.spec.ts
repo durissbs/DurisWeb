@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   ANSI_COLORS,
   parseAnsiForVue,
+  parsePvpLogForVue,
   parseAnsiToHtml,
   ansiToHtmlWithStyles,
   htmlToAnsi,
@@ -363,5 +364,64 @@ describe('MUD editor conversion', () => {
     expect(
       htmlToAnsi('<h2>Heading</h2><ul><li><p>First</p></li><li><p>Second</p></li></ul><p>End</p>'),
     ).toBe('Heading\nFirst\nSecond\nEnd')
+  })
+})
+
+describe('native PvP log colors', () => {
+  function render(text: string) {
+    const element = document.createElement('div')
+    element.innerHTML = parsePvpLogForVue(text)
+    return element
+  }
+
+  it('uses the same eight backgrounds regardless of case', () => {
+    for (const letter of 'lrgybmcw') {
+      const lower = render(`&=${letter}YP`).querySelector('span')!
+      const upper = render(`&=${letter.toUpperCase()}YP`).querySelector('span')!
+      expect(lower.style.backgroundColor).not.toBe('')
+      expect(upper.style.backgroundColor).toBe(lower.style.backgroundColor)
+      expect(upper.style.color).toBe('rgb(255, 255, 0)')
+    }
+    expect(render('&=LYP').querySelector('span')!.style.backgroundColor).toBe('rgb(0, 0, 0)')
+  })
+
+  it('retains colored spaces, foreground order, and line boundaries', () => {
+    const element = render('&=bB  &=rR &+yM&+g**&+G*\r\n&=wW \nplain')
+    expect(element.textContent).toBe('   M***\n \nplain')
+    const spans = element.querySelectorAll('span')
+    expect(spans[0]!.textContent).toBe('  ')
+    expect(spans[0]!.style.backgroundColor).toBe('rgb(0, 0, 128)')
+    expect(spans[1]!.style.backgroundColor).toBe('rgb(128, 0, 0)')
+    expect(spans[2]!.style.color).toBe('rgb(128, 128, 0)')
+    expect(spans[2]!.style.backgroundColor).toBe('')
+    expect(spans[3]!.style.color).toBe('rgb(74, 180, 110)')
+    expect(spans[4]!.style.color).toBe('rgb(74, 222, 128)')
+    expect(spans[5]!.style.backgroundColor).toBe('rgb(192, 192, 192)')
+    expect(element.lastChild?.textContent).toBe('\nplain')
+  })
+
+  it('clears the opposite color and preserves unknown codes and literal text safely', () => {
+    const element = render('&=LRP&-B &+g.&N <img src=x>&q&+u&]\\n')
+    const spans = element.querySelectorAll('span')
+    expect(spans[1]!.style.color).toBe('')
+    expect(spans[1]!.style.backgroundColor).toBe('rgb(0, 0, 128)')
+    expect(spans[2]!.style.backgroundColor).toBe('')
+    expect(element.textContent).toBe('P . <img src=x>&q&+u&]\\n')
+    expect(element.querySelector('img')).toBeNull()
+  })
+})
+
+describe('readable native log foregrounds', () => {
+  it('preserves bold, resets, and readable dark colors on black', () => {
+    const element = document.createElement('div')
+    element.innerHTML = parsePvpLogForVue('&+RHit&+rred&+bblue&+lgray&nplain&=LYP&-B ')
+    const spans = element.querySelectorAll('span')
+    expect(spans[0]!.style.fontWeight).toBe('bold')
+    expect(spans[1]!.style.fontWeight).toBe('')
+    expect(spans[1]!.style.color).toBe('rgb(220, 90, 90)')
+    expect(spans[2]!.style.color).toBe('rgb(59, 130, 246)')
+    expect(spans[3]!.style.color).toBe('rgb(156, 163, 175)')
+    expect(spans[4]!.style.fontWeight).toBe('bold')
+    expect(spans[5]!.style.fontWeight).toBe('')
   })
 })
