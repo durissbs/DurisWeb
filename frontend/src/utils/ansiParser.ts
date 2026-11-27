@@ -506,11 +506,11 @@ const logBrightColors: Record<string, string> = {
 
 const logReadableColors: Record<string, string> = {
   l: '156,163,175',
-  b: '96,165,250',
+  b: '59,130,246',
   g: '74,180,110',
   c: '34,180,200',
-  r: '248,113,113',
-  m: '192,132,252',
+  r: '220,90,90',
+  m: '168,110,220',
   y: '128,128,0',
   w: '192,192,192',
 }

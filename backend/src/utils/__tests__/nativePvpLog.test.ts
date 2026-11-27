@@ -1,3 +1,4 @@
+import { describe, expect, it } from '@jest/globals';
 import { stripNativePvpLog } from '../nativePvpLog.js';
 
 // Mirror frontend fixtures: quotes must match rendered log text.
